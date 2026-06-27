@@ -1,0 +1,8 @@
+{
+  "name": "peppermint-crew-planner",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "test": "node scripts/check.js"
+  }
+}
