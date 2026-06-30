@@ -1,0 +1,1019 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#d71920" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Peppermint" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Peppermint Crew Planner</title>
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <section class="login-screen" id="loginScreen">
+      <form class="login-card" id="loginForm">
+        <div class="login-brand">
+          <div class="brand-mark">P</div>
+          <div>
+            <strong>Peppermint</strong>
+            <span>Crew planner</span>
+          </div>
+        </div>
+        <div>
+          <p class="eyebrow">BTB/RSE</p>
+          <h1>Log in</h1>
+          <p class="login-copy">Choose the access level and enter your profile email.</p>
+        </div>
+        <label>
+          User level
+          <select name="loginLevel" id="loginLevelSelect">
+            <option value="admin">Admin</option>
+            <option value="technician">Sound engineer</option>
+            <option value="dj">DJ</option>
+            <option value="promoter">Promoter</option>
+          </select>
+        </label>
+        <label id="loginProfileField" hidden>
+          <span id="loginProfileLabel">Email</span>
+          <input name="loginEmail" id="loginEmailInput" type="email" autocomplete="email" required />
+        </label>
+        <label class="remember-device-option">
+          <input name="rememberDevice" id="rememberDevice" type="checkbox" />
+          <span>Remember this device</span>
+        </label>
+        <button class="primary-button" type="submit">Continue</button>
+      </form>
+    </section>
+
+    <div class="app-shell" id="appShell" hidden>
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark" id="appBrandMark">P</div>
+          <div>
+            <strong>Peppermint</strong>
+            <span>Crew planner</span>
+          </div>
+        </div>
+
+        <div class="session-actions">
+          <button class="ghost-button" type="button" id="logoutButton">Log out</button>
+        </div>
+
+        <nav class="nav-list" aria-label="Main navigation">
+          <button class="nav-item active" type="button" data-view="dashboard" aria-label="Dashboard home">
+            <span class="icon" aria-hidden="true">⌂</span>
+            <span>Dashboard home</span>
+          </button>
+          <button class="nav-item" type="button" data-view="calendar" aria-label="Calendar">
+            <span class="icon" aria-hidden="true">◫</span>
+            <span>Calendar</span>
+          </button>
+          <button class="nav-item" type="button" data-view="crew" aria-label="Crew">
+            <span class="icon" aria-hidden="true">◎</span>
+            <span>Crew</span>
+          </button>
+          <button class="nav-item" type="button" data-view="profiles" aria-label="Profiles">
+            <span class="icon" aria-hidden="true">◉</span>
+            <span>Profiles</span>
+          </button>
+          <button class="nav-item" type="button" data-view="myprofile" aria-label="My profile">
+            <span class="icon" aria-hidden="true">●</span>
+            <span>My profile</span>
+          </button>
+          <button class="nav-item" type="button" data-view="rota" aria-label="Rota">
+            <span class="icon" aria-hidden="true">≡</span>
+            <span>Rota</span>
+          </button>
+          <button class="nav-item" type="button" data-view="docs" aria-label="Documents">
+            <span class="icon" aria-hidden="true">□</span>
+            <span>Documents</span>
+          </button>
+          <button class="nav-item" type="button" data-view="email" aria-label="Email">
+            <span class="icon" aria-hidden="true">@</span>
+            <span>Email</span>
+          </button>
+          <button class="nav-item" type="button" data-view="report" aria-label="Report">
+            <span class="icon" aria-hidden="true">!</span>
+            <span>Report</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-panel">
+          <span class="panel-label">Today</span>
+          <strong>3 bookings need confirmation</strong>
+          <button class="text-button" type="button" id="reviewBookings">Review</button>
+        </div>
+      </aside>
+
+      <main class="workspace" id="workspace">
+        <header class="topbar">
+          <div>
+            <h1 id="workspaceTitle">BTB/RSE</h1>
+            <p class="workspace-subtitle" id="workspaceSubtitle">Dashboard home gives you the full operational picture at a glance.</p>
+          </div>
+          <div class="topbar-actions">
+            <label class="theme-toggle" aria-label="Toggle light mode">
+              <input type="checkbox" id="themeToggle" />
+              <span class="toggle-track" aria-hidden="true">
+                <span class="toggle-thumb"></span>
+              </span>
+              <span id="themeToggleLabel">Dark</span>
+            </label>
+            <button class="ghost-button" type="button" id="openAvailability">Log availability</button>
+            <button class="primary-button" type="button" id="openEvent">New event</button>
+          </div>
+        </header>
+
+        <section class="stats-grid" aria-label="Planner summary">
+          <article class="dashboard-weather" id="dashboardWeather">
+            <div class="weather-top-head">
+              <div>
+                <span>Weather</span>
+                <strong>South Bank forecast</strong>
+              </div>
+              <button class="icon-button" type="button" id="refreshWeather" aria-label="Refresh weather">↻</button>
+            </div>
+            <div class="weather-summary" id="weatherSummary">
+              <strong>Loading forecast</strong>
+              <span>Checking the latest conditions.</span>
+            </div>
+            <div class="weather-list" id="weatherList"></div>
+            <small class="weather-updated" id="weatherUpdated">Forecast for Between The Bridges area</small>
+          </article>
+          <article class="dashboard-tube" id="dashboardTube" hidden>
+            <div class="tube-top-head">
+              <div>
+                <span>Travel</span>
+                <strong>Tube status</strong>
+              </div>
+              <div class="tube-actions">
+                <button class="text-button" type="button" id="tubeExpandToggle" aria-expanded="false" aria-controls="tubeList">More</button>
+                <button class="icon-button" type="button" id="refreshTubeStatus" aria-label="Refresh Tube status">↻</button>
+              </div>
+            </div>
+            <div class="tube-summary" id="tubeSummary">
+              <strong>Loading Tube status</strong>
+              <span>Checking TfL line updates.</span>
+            </div>
+            <small class="tube-updated" id="tubeUpdated">London Underground live status</small>
+            <div class="tube-list" id="tubeList"></div>
+          </article>
+          <article class="dashboard-email" id="dashboardEmail" hidden>
+            <div class="email-widget-head">
+              <div>
+                <span>Email</span>
+                <strong>Unread inbox</strong>
+              </div>
+              <button class="icon-button" type="button" id="openEmailDashboard" aria-label="Open Email tab">@</button>
+            </div>
+            <div class="email-widget-count">
+              <strong id="unreadEmailCount">0</strong>
+              <span id="unreadEmailLabel">Unread messages</span>
+            </div>
+            <small id="unreadEmailAccount">production@betweenthebridges.co.uk</small>
+          </article>
+        </section>
+
+        <section class="main-grid">
+          <div class="panel calendar-panel" data-panel="calendar">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Calendar</p>
+                <h2 id="calendarTitle">June bookings</h2>
+              </div>
+              <div class="calendar-controls">
+                <label class="calendar-filter" id="myBookingsFilter" hidden>
+                  <input type="checkbox" id="myBookingsToggle" />
+                  <span>My bookings</span>
+                </label>
+                <div class="month-actions calendar-jump" aria-label="Calendar period navigation">
+                  <button class="icon-button" type="button" id="previousCalendarPeriod" aria-label="Previous period">‹</button>
+                  <button class="icon-button" type="button" id="nextCalendarPeriod" aria-label="Next period">›</button>
+                </div>
+                <div class="segmented" role="group" aria-label="Calendar view">
+                  <button type="button" class="active" data-calendar-view="week">Week</button>
+                  <button type="button" data-calendar-view="month">Month</button>
+                </div>
+                <label class="calendar-filter venue-filter" id="calendarVenueFilterField" hidden>
+                  <span>Venue</span>
+                  <select id="calendarVenueFilter">
+                    <option value="all">All venues</option>
+                    <option value="Dock">Dock</option>
+                    <option value="Pier">Pier</option>
+                    <option value="Garden">Garden</option>
+                    <option value="Whole site BTB">Whole site BTB</option>
+                    <option value="Riverside Yard">Riverside Yard</option>
+                    <option value="Riverside Upstairs">Riverside Upstairs</option>
+                    <option value="Riverside whole site">Riverside whole site</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+            <div class="calendar-strip" id="calendarStrip" aria-label="Event calendar"></div>
+          </div>
+
+          <div class="panel event-panel" data-panel="event">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Next event</p>
+                <h2 id="selectedEventTitle">Select an event</h2>
+              </div>
+              <span class="status-pill" id="selectedEventStatus">Pencil</span>
+            </div>
+            <div id="eventDetails" class="event-details"></div>
+          </div>
+
+          <div class="panel crew-panel" data-panel="crew">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow" id="crewPanelEyebrow">Availability</p>
+                <h2 id="crewAvailabilityTitle">Unavailable dates</h2>
+              </div>
+              <div class="crew-controls">
+                <div class="period-controls" id="crewPeriodControls" aria-label="Crew availability period">
+                  <button class="icon-button" type="button" id="previousCrewPeriod" aria-label="Previous crew period">‹</button>
+                  <span id="crewPeriodLabel">This week</span>
+                  <button class="icon-button" type="button" id="nextCrewPeriod" aria-label="Next crew period">›</button>
+                </div>
+                <div class="segmented" id="crewAvailabilityView" role="group" aria-label="Crew availability view" hidden>
+                  <button type="button" class="active" data-crew-availability-view="week">Week</button>
+                  <button type="button" data-crew-availability-view="month">Month</button>
+                </div>
+                <select id="roleFilter" aria-label="Filter freelancers by role">
+                  <option value="all">All roles</option>
+                  <option value="Promoter">Promoter</option>
+                  <option value="Sound engineer">Sound engineer</option>
+                  <option value="Lighting engineer">Lighting engineer</option>
+                  <option value="DJ">DJ</option>
+                  <option value="Crew">Crew</option>
+                </select>
+              </div>
+            </div>
+            <div class="availability-board" id="availabilityBoard" aria-label="Team unavailable dates"></div>
+            <div class="crew-list" id="crewList"></div>
+          </div>
+
+          <div class="panel profiles-panel" data-panel="profiles">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Profiles</p>
+                <h2>Team profiles</h2>
+              </div>
+            </div>
+            <form class="profile-form" id="profileForm">
+              <input type="hidden" name="profileId" />
+              <div class="form-grid">
+                <label>
+                  Name
+                  <input name="name" type="text" placeholder="Freelancer name" required />
+                </label>
+                <label>
+                  Role
+                  <select name="role" required>
+                    <option value="Promoter">Promoter</option>
+                    <option value="Sound engineer" selected>Sound engineer</option>
+                    <option value="Lighting engineer">Lighting engineer</option>
+                    <option value="DJ">DJ</option>
+                    <option value="Crew">Crew</option>
+                  </select>
+                </label>
+                <label>
+                  Location
+                  <input name="location" type="text" placeholder="London" />
+                </label>
+                <label>
+                  Email
+                  <input name="email" type="email" placeholder="name@example.com" />
+                </label>
+                <label>
+                  WhatsApp
+                  <input name="whatsapp" type="tel" placeholder="+44..." />
+                </label>
+              </div>
+              <div class="modal-actions profile-actions">
+                <button class="ghost-button" type="button" id="cancelProfileEdit" hidden>Cancel edit</button>
+                <button class="primary-button" type="submit" id="profileSubmitButton">Create profile</button>
+              </div>
+            </form>
+            <div class="profile-list" id="profileList"></div>
+          </div>
+
+          <div class="panel my-profile-panel" data-panel="myprofile">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">My profile</p>
+                <h2 id="selfProfileTitle">Profile details</h2>
+              </div>
+            </div>
+            <form class="profile-form self-profile-form" id="selfProfileForm">
+              <div class="self-profile-photo-row">
+                <div class="profile-photo-preview" id="selfProfilePhotoPreview" aria-hidden="true"></div>
+                <label>
+                  Profile picture
+                  <input name="profilePhoto" id="selfProfilePhoto" type="file" accept="image/*" />
+                </label>
+              </div>
+              <div class="profile-photo-editor" id="profilePhotoEditor" hidden>
+                <div class="profile-photo-frame" id="profilePhotoFrame" aria-label="Reframe profile picture"></div>
+                <div class="profile-photo-controls">
+                  <label>
+                    Scale
+                    <input name="profilePhotoScale" id="profilePhotoScale" type="range" min="1" max="3" step="0.01" value="1" />
+                  </label>
+                  <button class="ghost-button" type="button" id="profilePhotoReset">Reset image</button>
+                </div>
+              </div>
+              <div class="form-grid">
+                <label>
+                  Name
+                  <input name="name" type="text" required />
+                </label>
+                <label>
+                  Role
+                  <input name="role" type="text" readonly />
+                </label>
+                <label>
+                  Location
+                  <input name="location" type="text" placeholder="London" />
+                </label>
+                <label>
+                  Email
+                  <input name="email" type="email" placeholder="name@example.com" />
+                </label>
+                <label>
+                  WhatsApp
+                  <input name="whatsapp" type="tel" placeholder="+44..." />
+                </label>
+                <label>
+                  New passcode
+                  <input name="newPasscode" type="password" inputmode="numeric" autocomplete="new-password" placeholder="Leave blank to keep current passcode" />
+                </label>
+                <label>
+                  Confirm passcode
+                  <input name="confirmPasscode" type="password" inputmode="numeric" autocomplete="new-password" />
+                </label>
+              </div>
+              <div class="modal-actions profile-actions">
+                <button class="primary-button" type="submit">Save profile</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="panel docs-panel" data-panel="docs">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Document library</p>
+                <h2>All documents</h2>
+              </div>
+              <button class="icon-button" type="button" id="attachDoc" aria-label="Upload document">+</button>
+            </div>
+            <div class="document-list" id="documentList"></div>
+            <input id="quickAttachDocInput" type="file" multiple hidden />
+          </div>
+
+          <div class="panel email-panel" data-panel="email">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Admin mailbox</p>
+                <h2>Email</h2>
+              </div>
+            </div>
+            <div class="email-inbox-toolbar">
+              <div>
+                <p class="eyebrow">Inbox</p>
+                <strong id="emailInboxStatus">Loading inbox</strong>
+              </div>
+              <button class="icon-button" type="button" id="refreshEmailInbox" aria-label="Refresh inbox">↻</button>
+            </div>
+            <div class="email-inbox-layout">
+              <div class="email-inbox-list" id="emailInboxList" aria-label="Inbox messages"></div>
+              <div class="email-message-column">
+                <article class="email-message-view" id="emailMessageView">
+                  <div class="empty-state">Select an inbox message to read and reply.</div>
+                </article>
+                <form class="email-reply-form" id="emailReplyForm" hidden>
+                  <input type="hidden" name="messageId" />
+                  <input type="hidden" name="threadId" />
+                  <label>
+                    To
+                    <input name="to" type="email" multiple required />
+                  </label>
+                  <label>
+                    Cc
+                    <input name="cc" type="email" multiple />
+                  </label>
+                  <label class="email-reply-all-option">
+                    <input name="replyAll" id="emailReplyAll" type="checkbox" />
+                    <span>Reply all</span>
+                  </label>
+                  <label>
+                    Subject
+                    <input name="subject" type="text" required />
+                  </label>
+                  <label>
+                    Reply
+                    <textarea name="body" rows="5" required></textarea>
+                  </label>
+                  <div class="email-reply-attachment-tools">
+                    <label>
+                      Attachments
+                      <input name="attachments" id="emailReplyAttachments" type="file" multiple />
+                    </label>
+                    <button class="ghost-button" type="button" id="emailReplyClearAttachments" hidden>Clear</button>
+                  </div>
+                  <div class="email-reply-attachment-list" id="emailReplyAttachmentList">No attachments selected</div>
+                  <div class="modal-actions">
+                    <button class="ghost-button" type="button" id="emailReplyDraft">Open draft</button>
+                    <button class="primary-button" type="submit">Send reply</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel rota-panel" data-panel="rota">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Rota</p>
+                <h2 id="rotaTitle">Weekly crew schedule</h2>
+              </div>
+              <div class="rota-controls">
+                <label class="calendar-filter" id="rotaMyBookingsFilter" hidden>
+                  <input type="checkbox" id="rotaMyBookingsToggle" />
+                  <span>My bookings</span>
+                </label>
+                <div class="period-controls" aria-label="Rota period">
+                  <button class="icon-button" type="button" id="previousRotaPeriod" aria-label="Previous rota period">‹</button>
+                  <span id="rotaPeriodLabel">This week</span>
+                  <button class="icon-button" type="button" id="nextRotaPeriod" aria-label="Next rota period">›</button>
+                </div>
+                <div class="segmented" id="rotaView" role="group" aria-label="Rota view">
+                  <button type="button" class="active" data-rota-view="week">Week</button>
+                  <button type="button" data-rota-view="month">Month</button>
+                </div>
+                <label class="calendar-filter venue-filter" id="rotaVenueFilterField" hidden>
+                  <span>Venue</span>
+                  <select id="rotaVenueFilter">
+                    <option value="all">All venues</option>
+                    <option value="Dock">Dock</option>
+                    <option value="Pier">Pier</option>
+                    <option value="Garden">Garden</option>
+                    <option value="Whole site BTB">Whole site BTB</option>
+                    <option value="Riverside Yard">Riverside Yard</option>
+                    <option value="Riverside Upstairs">Riverside Upstairs</option>
+                    <option value="Riverside whole site">Riverside whole site</option>
+                  </select>
+                </label>
+                <button class="ghost-button" type="button" id="confirmRotaShifts" hidden>Confirm all shifts</button>
+                <button class="ghost-button" type="button" id="addBookingsToCalendar" hidden>Add to Calendar</button>
+                <button class="primary-button" type="button" id="generateRota">Generate rota</button>
+                <button class="ghost-button" type="button" id="exportRota">Notify engineers</button>
+              </div>
+            </div>
+            <div class="rota-board" id="rotaBoard" aria-label="Weekly rota"></div>
+            <div class="rota-distribution" id="rotaDistribution" hidden></div>
+          </div>
+
+          <div class="panel report-panel" data-panel="report">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Equipment issue</p>
+                <h2>Report</h2>
+              </div>
+            </div>
+            <form class="report-form" id="reportForm">
+              <div class="form-grid">
+                <label>
+                  Venue
+                  <select name="venue" id="reportVenue" required>
+                    <option value="">Select venue</option>
+                    <option value="Dock">Dock</option>
+                    <option value="Pier">Pier</option>
+                    <option value="Garden">Garden</option>
+                    <option value="Whole site BTB">Whole site BTB</option>
+                    <option value="Riverside Yard">Riverside Yard</option>
+                    <option value="Riverside Upstairs">Riverside Upstairs</option>
+                    <option value="Riverside whole site">Riverside whole site</option>
+                  </select>
+                </label>
+                <label>
+                  Date of report
+                  <input name="reportDate" id="reportDate" type="date" required />
+                </label>
+              </div>
+              <label>
+                Describe the issue
+                <textarea
+                  name="issue"
+                  id="reportIssue"
+                  placeholder="What is faulty, where is it located, and what happened?"
+                  required
+                ></textarea>
+              </label>
+              <label>
+                Attach photos or videos
+                <input name="media" id="reportMedia" type="file" accept="image/*,video/*" multiple />
+              </label>
+              <div class="attachment-list" id="reportAttachmentList">No media selected</div>
+              <div class="modal-actions">
+                <button class="primary-button" type="submit">Send report</button>
+              </div>
+            </form>
+          </div>
+
+        </section>
+      </main>
+    </div>
+
+    <dialog id="eventModal">
+      <form method="dialog" class="modal-card" id="eventForm">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">Create booking</p>
+            <h2 id="eventModalTitle">New event</h2>
+          </div>
+          <button class="icon-button" type="button" data-event-close aria-label="Close">×</button>
+        </div>
+        <label>
+          Event name
+          <input name="title" type="text" placeholder="Private launch party" required />
+        </label>
+        <div class="form-grid">
+          <label>
+            Date
+            <input name="date" type="date" required />
+          </label>
+          <label>
+            Status
+            <select name="status" required>
+              <option value="pencil">Pencil</option>
+              <option value="contract-sent">Contract sent</option>
+              <option value="confirmed">Confirmed</option>
+            </select>
+          </label>
+          <label>
+            Load in
+            <select name="loadInTime" class="time-select"></select>
+          </label>
+          <label>
+            Doors
+            <select name="doorsTime" class="time-select"></select>
+          </label>
+          <label>
+            End
+            <select name="endTime" class="time-select"></select>
+          </label>
+          <label>
+            Promoter
+            <select name="promoterId" id="eventPromoterSelect"></select>
+          </label>
+        </div>
+        <label>
+          Venue
+          <select name="venue" required>
+            <option value="">Select venue</option>
+            <option value="Dock">Dock</option>
+            <option value="Pier">Pier</option>
+            <option value="Garden">Garden</option>
+            <option value="Whole site BTB">Whole site BTB</option>
+            <option value="Riverside Yard">Riverside Yard</option>
+            <option value="Riverside Upstairs">Riverside Upstairs</option>
+            <option value="Riverside whole site">Riverside whole site</option>
+          </select>
+        </label>
+        <section class="repeat-fields" id="eventRepeatFields">
+          <label>
+            Repeat
+            <select name="repeatMode" id="repeatMode">
+              <option value="none">Do not repeat</option>
+              <option value="specific">Specific dates</option>
+              <option value="weekly">Weekly</option>
+            </select>
+          </label>
+          <div class="repeat-specific" id="repeatSpecificFields" hidden>
+            <div class="repeat-date-row">
+              <label>
+                Repeat date
+                <input type="date" id="repeatSpecificDate" />
+              </label>
+              <button class="ghost-button" type="button" id="addRepeatDate">Add date</button>
+            </div>
+            <div class="repeat-date-list" id="repeatDateList">No repeat dates added</div>
+          </div>
+          <div class="repeat-weekly" id="repeatWeeklyFields" hidden>
+            <label>
+              Repeat weekly until
+              <input name="repeatUntil" id="repeatUntil" type="date" />
+            </label>
+            <label class="inline-check">
+              <input name="repeatIndefinitely" id="repeatIndefinitely" type="checkbox" />
+              <span>Repeat indefinitely</span>
+            </label>
+          </div>
+        </section>
+        <div class="role-picker">
+          <button class="role-picker-trigger" type="button" id="rolePickerToggle" aria-expanded="false">
+            <span>
+              <small>Staffing</small>
+              <strong id="rolePickerSummary">Select staffing</strong>
+            </span>
+            <span aria-hidden="true">⌄</span>
+          </button>
+          <div class="role-picker-menu" id="rolePickerMenu" hidden>
+            <div class="role-assignment-list" id="roleAssignmentList"></div>
+          </div>
+        </div>
+        <label>
+          Set times
+          <textarea name="setTimes" placeholder="19:00 - DJ warm up&#10;20:30 - Headline set&#10;22:45 - Close"></textarea>
+        </label>
+        <details class="booking-details-menu">
+          <summary>
+            <span>
+              <small>Additional booking details</small>
+              <strong>Client, bar, food and needs</strong>
+            </span>
+            <span aria-hidden="true">⌄</span>
+          </summary>
+          <div class="booking-details-content">
+            <section class="form-section">
+              <p class="eyebrow">Client</p>
+              <div class="form-grid three-column">
+                <label>
+                  Client name
+                  <input name="clientName" type="text" placeholder="Client or promoter name" />
+                </label>
+                <label>
+                  Client contact
+                  <input name="clientContact" type="text" placeholder="Phone or email" />
+                </label>
+                <label>
+                  Guest numbers
+                  <input name="guestNumbers" type="number" min="0" placeholder="Expected guests" />
+                </label>
+              </div>
+            </section>
+            <section class="form-section">
+              <p class="eyebrow">Bar</p>
+              <div class="form-grid">
+                <label>
+                  Bar type
+                  <select name="barType">
+                    <option value="">Select bar type</option>
+                    <option value="Pay as you go">Pay as you go</option>
+                    <option value="Cashless">Cashless</option>
+                  </select>
+                </label>
+                <label class="inline-check">
+                  <input name="welcomeDrinks" type="checkbox" />
+                  <span>Welcome drinks</span>
+                </label>
+              </div>
+              <label>
+                Bar notes
+                <textarea name="barNotes" placeholder="Bar float, service notes, drinks package, or timings."></textarea>
+              </label>
+            </section>
+            <section class="form-section">
+              <p class="eyebrow">Food</p>
+              <div class="form-grid">
+                <label>
+                  Food
+                  <select name="foodType">
+                    <option value="">Select food option</option>
+                    <option value="Kitchen">Kitchen</option>
+                    <option value="Trader">Trader</option>
+                    <option value="External">External</option>
+                  </select>
+                </label>
+                <div>
+                  <span class="field-label">Dietary requirements</span>
+                  <div class="checkbox-grid dietary-grid">
+                    <label class="inline-check">
+                      <input name="dietaryRequirements" type="checkbox" value="Vegetarian" />
+                      <span>Vegetarian</span>
+                    </label>
+                    <label class="inline-check">
+                      <input name="dietaryRequirements" type="checkbox" value="Vegan" />
+                      <span>Vegan</span>
+                    </label>
+                    <label class="inline-check">
+                      <input name="dietaryRequirements" type="checkbox" value="Gluten free" />
+                      <span>Gluten free</span>
+                    </label>
+                    <label class="inline-check">
+                      <input name="dietaryRequirements" type="checkbox" value="Dairy free" />
+                      <span>Dairy free</span>
+                    </label>
+                    <label class="inline-check">
+                      <input name="dietaryRequirements" type="checkbox" value="Nut allergy" />
+                      <span>Nut allergy</span>
+                    </label>
+                    <label class="inline-check">
+                      <input name="dietaryRequirements" type="checkbox" value="Halal" />
+                      <span>Halal</span>
+                    </label>
+                    <label class="inline-check">
+                      <input name="dietaryRequirements" type="checkbox" value="Kosher" />
+                      <span>Kosher</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <label>
+                Food notes
+                <textarea name="foodNotes" placeholder="Kitchen times, trader details, external supplier notes, or dietary detail."></textarea>
+              </label>
+            </section>
+            <section class="form-section">
+              <p class="eyebrow">Event needs</p>
+              <div class="checkbox-grid">
+                <label class="inline-check">
+                  <input name="needsWristbands" type="checkbox" />
+                  <span>Wristbands</span>
+                </label>
+                <label class="inline-check">
+                  <input name="needsDjSetup" type="checkbox" />
+                  <span>DJ set up</span>
+                </label>
+                <label class="inline-check">
+                  <input name="needsMicrophones" type="checkbox" />
+                  <span>Microphones</span>
+                </label>
+                <label class="inline-check">
+                  <input name="needsPlaylist" type="checkbox" />
+                  <span>Playlist</span>
+                </label>
+              </div>
+            </section>
+          </div>
+        </details>
+        <label>
+          Notes
+          <textarea name="notes" placeholder="Access notes, client requests, production reminders, or anything the team needs on the day."></textarea>
+        </label>
+        <section class="form-section" id="eventDocumentsSection" hidden>
+          <p class="eyebrow">Attachments</p>
+          <label>
+            Attach documents
+            <input name="eventDocuments" id="eventDocuments" type="file" multiple />
+          </label>
+          <div class="attachment-list event-document-list" id="eventDocumentList">No documents attached</div>
+        </section>
+        <div class="modal-actions event-form-actions">
+          <button class="text-button danger-button event-delete-button" type="button" id="deleteEventButton" hidden>Delete event</button>
+          <span class="modal-action-spacer" aria-hidden="true"></span>
+          <button class="ghost-button" type="button" data-event-close>Cancel</button>
+          <button class="primary-button" type="submit" id="eventSubmitButton">Create event</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="eventViewModal">
+      <form method="dialog" class="modal-card event-view-card">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">Event details</p>
+            <h2 id="eventViewTitle">Event</h2>
+          </div>
+          <div class="modal-head-actions">
+            <div class="event-view-nav" aria-label="Event navigation">
+              <button class="icon-button" type="button" id="eventViewPrevious" aria-label="Previous event" title="Previous event">&lt;</button>
+              <button class="icon-button" type="button" id="eventViewNext" aria-label="Next event" title="Next event">&gt;</button>
+            </div>
+            <span class="status-pill" id="eventViewStatus">Pencil</span>
+            <button class="icon-button" type="button" data-close aria-label="Close">×</button>
+          </div>
+        </div>
+        <div id="eventViewDetails" class="event-details"></div>
+      </form>
+    </dialog>
+
+    <dialog id="eventExitModal">
+      <form method="dialog" class="modal-card event-exit-card">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">Event not saved</p>
+            <h2>Save before closing?</h2>
+          </div>
+          <button class="icon-button" type="button" data-close aria-label="Close">×</button>
+        </div>
+        <div class="assignment-summary">
+          <strong>Do you want to save this event before leaving?</strong>
+          <small>Choose save to keep your changes, or leave without saving to close the event form.</small>
+        </div>
+        <div class="modal-actions">
+          <button class="ghost-button" type="button" data-close>Keep editing</button>
+          <button class="ghost-button" type="button" id="discardEventChanges">Leave without saving</button>
+          <button class="primary-button" type="button" id="saveEventBeforeClose">Save event</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="eventSheetModal">
+      <form method="dialog" class="modal-card sheet-choice-card">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">Event sheet</p>
+            <h2 id="eventSheetModalTitle">PDF sheet</h2>
+          </div>
+          <button class="icon-button" type="button" data-close aria-label="Close">x</button>
+        </div>
+        <div class="sheet-choice-summary">
+          <strong id="eventSheetSummary">Choose how to generate this event sheet.</strong>
+          <small>Print a one-page A4 sheet or save it as a PDF file.</small>
+        </div>
+        <div class="modal-actions">
+          <button class="ghost-button" type="button" data-close>Cancel</button>
+          <button class="ghost-button" type="button" id="printEventSheetButton">Print sheet</button>
+          <button class="primary-button" type="button" id="saveEventSheetButton">Save PDF</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="rotaAssignModal">
+      <form method="dialog" class="modal-card" id="rotaAssignForm">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">Rota assignment</p>
+            <h2 id="rotaAssignTitle">Assign staff</h2>
+          </div>
+          <button class="icon-button" type="button" data-close aria-label="Close">×</button>
+        </div>
+        <div class="assignment-summary" id="rotaAssignSummary"></div>
+        <div class="form-grid">
+          <label>
+            Engineer
+            <select name="engineer" id="rotaEngineerSelect"></select>
+          </label>
+          <label>
+            DJ
+            <select name="dj" id="rotaDjSelect"></select>
+          </label>
+        </div>
+        <div class="assignment-note" id="rotaAssignNote">Only people available for the event date are shown.</div>
+        <div class="modal-actions">
+          <button class="ghost-button" type="button" data-close>Cancel</button>
+          <button class="primary-button" type="submit">Save assignment</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="rotaWhatsappModal">
+      <form method="dialog" class="modal-card rota-whatsapp-card">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">WhatsApp rota</p>
+            <h2>Confirm shift messages</h2>
+          </div>
+          <button class="icon-button" type="button" data-close aria-label="Close">×</button>
+        </div>
+        <div class="assignment-summary" id="rotaWhatsappSummary"></div>
+        <div class="whatsapp-message-list" id="rotaWhatsappList"></div>
+        <div class="modal-actions">
+          <button class="ghost-button" type="button" data-close>Done</button>
+          <button class="primary-button" type="button" id="openRotaWhatsappMessages">Open WhatsApp messages</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="passcodeModal">
+      <form method="dialog" class="modal-card passcode-card" id="passcodeForm">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">Profile passcode</p>
+            <h2 id="passcodeTitle">Unlock profile</h2>
+          </div>
+          <button class="icon-button" type="button" data-passcode-cancel aria-label="Close">×</button>
+        </div>
+        <div class="assignment-summary" id="passcodeSummary"></div>
+        <label>
+          <span id="passcodeFieldLabel">Passcode</span>
+          <input
+            name="passcode"
+            id="profilePasscode"
+            type="password"
+            inputmode="numeric"
+            pattern="[0-9]{4,6}"
+            minlength="4"
+            maxlength="6"
+            autocomplete="one-time-code"
+            required
+          />
+        </label>
+        <div class="modal-actions">
+          <button class="ghost-button" type="button" data-passcode-cancel>Back</button>
+          <button class="primary-button" type="submit" id="passcodeSubmitButton">Unlock profile</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="availabilityModal">
+      <form method="dialog" class="modal-card" id="availabilityForm">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">Freelancer portal</p>
+            <h2>Log availability</h2>
+          </div>
+          <button class="icon-button" type="button" data-close aria-label="Close">×</button>
+        </div>
+        <label>
+          Freelancer
+          <select name="freelancer" id="availabilityPerson"></select>
+        </label>
+        <div>
+          <div class="month-toolbar">
+            <div>
+              <p class="eyebrow">Tick full day or AM unavailable</p>
+              <strong id="availabilityMonthLabel">June 2026</strong>
+            </div>
+            <div class="month-actions">
+              <button class="icon-button" type="button" id="previousAvailabilityMonth" aria-label="Previous month">‹</button>
+              <button class="icon-button" type="button" id="nextAvailabilityMonth" aria-label="Next month">›</button>
+            </div>
+          </div>
+          <div class="calendar-weekdays" aria-hidden="true">
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
+            <span>Sun</span>
+          </div>
+          <div class="availability-picker" id="availabilityPicker" aria-label="Unavailable date calendar"></div>
+        </div>
+        <div class="modal-actions">
+          <button class="ghost-button" type="button" data-close>Cancel</button>
+          <button class="primary-button" type="submit">Save availability</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="availabilityExitModal">
+      <form method="dialog" class="modal-card event-exit-card">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">Availability not saved</p>
+            <h2>Save before closing?</h2>
+          </div>
+          <button class="icon-button" type="button" data-close aria-label="Close">×</button>
+        </div>
+        <div class="assignment-summary">
+          <strong>Do you want to save your availability before leaving?</strong>
+          <small>Choose save to keep your changes, or leave without saving to close the availability form.</small>
+        </div>
+        <div class="modal-actions">
+          <button class="ghost-button" type="button" data-close>Keep editing</button>
+          <button class="ghost-button" type="button" id="discardAvailabilityChanges">Leave without saving</button>
+          <button class="primary-button" type="button" id="saveAvailabilityBeforeClose">Save availability</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="documentEventModal">
+      <form method="dialog" class="modal-card document-event-card">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">Add document to events</p>
+            <h2 id="documentEventTitle">Choose events</h2>
+          </div>
+          <button class="icon-button" type="button" data-close aria-label="Close">×</button>
+        </div>
+        <div class="month-toolbar">
+          <div>
+            <p class="eyebrow">Calendar</p>
+            <strong id="documentEventMonthLabel">June 2026</strong>
+          </div>
+          <div class="month-actions">
+            <button class="icon-button" type="button" id="previousDocumentEventMonth" aria-label="Previous month">‹</button>
+            <button class="icon-button" type="button" id="nextDocumentEventMonth" aria-label="Next month">›</button>
+          </div>
+        </div>
+        <div class="calendar-weekdays document-event-weekdays" aria-hidden="true">
+          <span>Mon</span>
+          <span>Tue</span>
+          <span>Wed</span>
+          <span>Thu</span>
+          <span>Fri</span>
+          <span>Sat</span>
+          <span>Sun</span>
+        </div>
+        <div class="document-event-calendar" id="documentEventCalendar" aria-label="Select events for document"></div>
+        <div class="modal-actions">
+          <button class="ghost-button" type="button" data-close>Cancel</button>
+          <button class="primary-button" type="button" id="confirmDocumentEvents">Add to selected events</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <section class="print-sheet" id="printSheet" aria-hidden="true"></section>
+    <script src="app.js"></script>
+  </body>
+</html>

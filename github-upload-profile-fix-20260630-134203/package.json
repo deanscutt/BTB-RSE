@@ -1,0 +1,16 @@
+{
+  "name": "peppermint-crew-planner",
+  "private": true,
+  "engines": {
+    "node": ">=20 <25"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
+    "@vercel/blob": "^2.5.0"
+  },
+  "scripts": {
+    "build": "node scripts/check.js",
+    "start": "node server.js",
+    "test": "node scripts/check.js"
+  }
+}

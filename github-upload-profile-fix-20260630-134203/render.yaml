@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: peppermint-crew-planner
+    runtime: node
+    plan: free
+    buildCommand: npm test
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: HOST
+        value: 0.0.0.0
+      - key: PRODUCTION_EMAIL
+        value: production@betweenthebridges.co.uk
+      - key: EMAIL_FROM
+        value: "BTB/RSE Crew Planner <production@betweenthebridges.co.uk>"
+      - key: RESEND_API_KEY
+        sync: false

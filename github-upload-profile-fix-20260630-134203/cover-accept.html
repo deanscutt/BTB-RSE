@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#d71920" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Peppermint" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Accept cover</title>
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <section class="login-screen">
+      <form class="login-card" id="coverAcceptForm">
+        <div class="login-brand">
+          <div class="brand-mark">P</div>
+          <div>
+            <strong>Peppermint</strong>
+            <span>Crew planner</span>
+          </div>
+        </div>
+        <div>
+          <p class="eyebrow">Shift cover</p>
+          <h1 id="coverAcceptTitle">Loading</h1>
+          <p class="login-copy" id="coverAcceptSummary">Checking this cover request.</p>
+        </div>
+        <fieldset class="cover-engineer-field" id="coverEngineerField" hidden>
+          <legend>Your profile</legend>
+          <div class="cover-engineer-options" id="coverEngineerOptions"></div>
+        </fieldset>
+        <button class="primary-button" id="coverAcceptButton" type="submit" disabled>Accept cover</button>
+        <p class="login-copy" id="coverAcceptStatus"></p>
+      </form>
+    </section>
+    <script src="cover-accept.js"></script>
+  </body>
+</html>
